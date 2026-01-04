@@ -39,15 +39,22 @@
             height: 100%;
             z-index: -1;
             overflow: hidden;
+            display: none;
         }
 
         .particle {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 215, 0, 0.3);
-            border-radius: 50%;
+            width: 8px;
+            height: 8px;
+            background: none;
+            border-radius: 0;
             animation: float 15s infinite ease-in-out;
+        }
+
+        .particle::before {
+            content: '❤️';
+            font-size: 12px;
+            opacity: 0.6;
         }
 
         @keyframes float {
@@ -62,58 +69,26 @@
             }
         }
 
-        .play-overlay {
+        .music-indicator {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: opacity 0.5s ease;
-        }
-
-        .play-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .play-button {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, #d6ba8c 0%, #b8956a 100%);
-            border-radius: 50%;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            color: #6b5b4d;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 50px;
-            color: white;
-            box-shadow: 0 10px 40px rgba(214, 186, 140, 0.5);
-            transition: all 0.3s ease;
-            animation: pulse-play 2s infinite;
+            gap: 8px;
+            animation: pulse-music 2s infinite;
         }
 
-        .play-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 15px 50px rgba(214, 186, 140, 0.7);
-        }
-
-        @keyframes pulse-play {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .play-text {
-            margin-top: 30px;
-            font-size: 1.5em;
-            color: white;
-            letter-spacing: 2px;
-            font-weight: 400;
+        @keyframes pulse-music {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
         }
 
         .hero {
@@ -336,11 +311,21 @@
                 font-size: 1.15em;
             }
 
-            .music-toggle {
-                top: 20px;
+            .music-indicator {
+                bottom: 20px;
                 right: 20px;
-                width: 45px;
-                height: 45px;
+                font-size: 0.85em;
+                padding: 10px 16px;
+            }
+
+            .play-button {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+
+            .play-text {
+                font-size: 1.2em;
             }
         }
     </style>
@@ -349,12 +334,9 @@
     <div class="background"></div>
     <div class="particles" id="particles"></div>
     
-    <div class="play-overlay" id="playOverlay">
-        <div class="play-button">▶</div>
-        <div class="play-text">Nhấn để bắt đầu 🎵</div>
-    </div>
+    <div class="music-indicator">🎵 Đang phát nhạc</div>
     
-    <audio id="bgMusic" loop>
+    <audio id="bgMusic" loop autoplay>
         <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_2c4d6c2852.mp3" type="audio/mpeg">
     </audio>
 
@@ -420,17 +402,29 @@
 
     <footer class="footer">
         Có những khoảnh khắc chỉ đến một lần trong đời.<br>
-        Cảm ơn vì đã là một phần thanh xuân của mình. 💙
+        Cảm ơn vì đã là một phần thanh xuân của mình.
     </footer>
 
     <script>
-        const playOverlay = document.getElementById('playOverlay');
         const bgMusic = document.getElementById('bgMusic');
         bgMusic.volume = 0.35;
 
-        playOverlay.addEventListener('click', () => {
-            bgMusic.play();
-            playOverlay.classList.add('hidden');
+        // Thử phát nhạc tự động
+        window.addEventListener('load', () => {
+            bgMusic.play().catch(() => {
+                // Nếu autoplay bị chặn, thử phát khi có bất kỳ tương tác nào
+                document.addEventListener('click', () => {
+                    bgMusic.play();
+                }, { once: true });
+                
+                document.addEventListener('touchstart', () => {
+                    bgMusic.play();
+                }, { once: true });
+                
+                document.addEventListener('scroll', () => {
+                    bgMusic.play();
+                }, { once: true });
+            });
         });
 
         const particlesContainer = document.getElementById('particles');
@@ -461,5 +455,4 @@
         });
     </script>
 </body>
-
 </html>
