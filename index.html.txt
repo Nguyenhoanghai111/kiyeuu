@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Có Hẹn Với Thanh Xuân</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            color: #2c3e50;
+            overflow-x: hidden;
+            background: #f8f9fa;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 248, 220, 0.4), transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(173, 216, 230, 0.3), transparent 50%),
+                linear-gradient(135deg, #fdfbf7 0%, #f5f0e8 50%, #e8dfd3 100%);
+            z-index: -1;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            50% { 
+                transform: translateY(-100vh) translateX(50px);
+            }
+        }
+
+        .play-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
+        }
+
+        .play-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .play-button {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #d6ba8c 0%, #b8956a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: white;
+            box-shadow: 0 10px 40px rgba(214, 186, 140, 0.5);
+            transition: all 0.3s ease;
+            animation: pulse-play 2s infinite;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 50px rgba(214, 186, 140, 0.7);
+        }
+
+        @keyframes pulse-play {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .play-text {
+            margin-top: 30px;
+            font-size: 1.5em;
+            color: white;
+            letter-spacing: 2px;
+            font-weight: 400;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 4em;
+            font-weight: 600;
+            letter-spacing: 12px;
+            color: #6b5b4d;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeInTitle 2s ease 0.5s forwards;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-subtitle {
+            font-size: 1.4em;
+            color: #9a8a76;
+            font-style: italic;
+            font-weight: 400;
+            letter-spacing: 2px;
+            opacity: 0;
+            animation: fadeInSubtitle 2s ease 1.5s forwards;
+        }
+
+        @keyframes fadeInTitle {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                transform: translateY(30px);
+            }
+        }
+
+        @keyframes fadeInSubtitle {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                transform: translateY(20px);
+            }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: fadeInScroll 2s ease 2.5s forwards, bounce 2s infinite 3s;
+        }
+
+        @keyframes fadeInScroll {
+            to { opacity: 0.6; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        .scroll-indicator::before {
+            content: '⌄';
+            font-size: 2em;
+            color: #b8956a;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 100px 30px;
+        }
+
+        .section {
+            margin-bottom: 100px;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .content-text {
+            font-size: 1.25em;
+            line-height: 2.2;
+            color: #3a3a3a;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .content-text.indent {
+            text-indent: 50px;
+            text-align: justify;
+        }
+
+        .divider {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d6ba8c, transparent);
+            margin: 60px auto;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.08),
+                inset 0 0 0 1px rgba(214, 186, 140, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 248, 220, 0.3) 0%, transparent 70%);
+            animation: shimmer 8s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info-item {
+            position: relative;
+            z-index: 1;
+            font-size: 1.4em;
+            margin: 25px 0;
+            color: #3a3a3a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-weight: 500;
+        }
+
+        .info-item span {
+            font-size: 1.3em;
+        }
+
+        .closing {
+            text-align: center;
+            font-size: 1.3em;
+            line-height: 2.2;
+            color: #3a3a3a;
+            font-style: italic;
+            font-weight: 400;
+            margin: 80px 0;
+        }
+
+        .closing-emphasis {
+            display: block;
+            margin-top: 30px;
+            font-size: 1.1em;
+            color: #6b5b4d;
+            font-weight: 600;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 80px 30px 60px;
+            font-size: 1.15em;
+            color: #9a8a76;
+            font-style: italic;
+            line-height: 2;
+            background: linear-gradient(to bottom, transparent, rgba(248, 245, 240, 0.5));
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5em;
+                letter-spacing: 8px;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1em;
+                letter-spacing: 2px;
+            }
+
+            .container {
+                padding: 60px 20px;
+            }
+
+            .content-text {
+                font-size: 1.1em;
+                line-height: 2;
+            }
+
+            .info-card {
+                padding: 35px 25px;
+            }
+
+            .info-item {
+                font-size: 1.2em;
+            }
+
+            .closing {
+                font-size: 1.15em;
+            }
+
+            .music-toggle {
+                top: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="particles" id="particles"></div>
+    
+    <div class="play-overlay" id="playOverlay">
+        <div class="play-button">▶</div>
+        <div class="play-text">Nhấn để bắt đầu 🎵</div>
+    </div>
+    
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_2c4d6c2852.mp3" type="audio/mpeg">
+    </audio>
+
+    <section class="hero">
+        <h1 class="hero-title">CÓ HẸN VỚI THANH XUÂN</h1>
+        <p class="hero-subtitle">Lời mời đến buổi chụp kỷ yếu của Nguyễn Hoàng Hải</p>
+        <div class="scroll-indicator"></div>
+    </section>
+
+    <div class="container">
+        <div class="section">
+            <p class="content-text">
+                Gửi các bạn thân yêu,
+            </p>
+            <p class="content-text">
+                Thanh xuân là những ngày tháng chúng ta cùng nhau cười đùa,<br>
+                cùng nhau học bài, cùng nhau lớn lên dưới mái trường này.
+            </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <p class="content-text">
+                Biết rằng sắp tới mỗi người sẽ bước sang một hành trình riêng,<br>
+                nhưng trước khi chia tay, mình muốn mời các bạn đến<br>
+                để cùng lưu giữ những khoảnh khắc đẹp nhất của chúng ta.
+            </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <p class="content-text">
+                Đây không chỉ là buổi chụp ảnh kỷ yếu,<br>
+                mà là dịp để chúng ta gặp gỡ, trò chuyện,<br>
+                và tạo nên những kỷ niệm cuối cùng trước khi trưởng thành.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="info-card">
+                <div class="info-item">
+                    <span>⏰</span>
+                    <span><strong>Thời gian:</strong> 10h00 – Ngày 01/02/2026</span>
+                </div>
+                <div class="info-item">
+                    <span>📍</span>
+                    <span><strong>Địa điểm:</strong> Sân trường THPT Giáp Hải</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section closing">
+            Mong rằng các bạn sẽ sắp xếp thời gian đến nhé!<br>
+            Những bức ảnh này sẽ là minh chứng rằng<br>
+            chúng ta đã từng có một thời thanh xuân tuyệt vời bên nhau.
+            <span class="closing-emphasis">"Hẹn gặp lại các bạn vào ngày đó!"</span>
+        </div>
+    </div>
+
+    <footer class="footer">
+        Có những khoảnh khắc chỉ đến một lần trong đời.<br>
+        Cảm ơn vì đã là một phần thanh xuân của mình. 💙
+    </footer>
+
+    <script>
+        const playOverlay = document.getElementById('playOverlay');
+        const bgMusic = document.getElementById('bgMusic');
+        bgMusic.volume = 0.35;
+
+        playOverlay.addEventListener('click', () => {
+            bgMusic.play();
+            playOverlay.classList.add('hidden');
+        });
+
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -80px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
