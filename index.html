@@ -69,27 +69,7 @@
             }
         }
 
-        .music-indicator {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-size: 0.9em;
-            color: #6b5b4d;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            animation: pulse-music 2s infinite;
-        }
 
-        @keyframes pulse-music {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
 
         .hero {
             height: 100vh;
@@ -311,34 +291,12 @@
                 font-size: 1.15em;
             }
 
-            .music-indicator {
-                bottom: 20px;
-                right: 20px;
-                font-size: 0.85em;
-                padding: 10px 16px;
-            }
-
-            .play-button {
-                width: 100px;
-                height: 100px;
-                font-size: 40px;
-            }
-
-            .play-text {
-                font-size: 1.2em;
-            }
         }
     </style>
 </head>
 <body>
     <div class="background"></div>
     <div class="particles" id="particles"></div>
-    
-    <div class="music-indicator">🎵 Đang phát nhạc</div>
-    
-    <audio id="bgMusic" loop autoplay>
-        <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_2c4d6c2852.mp3" type="audio/mpeg">
-    </audio>
 
     <section class="hero">
         <h1 class="hero-title">CÓ HẸN VỚI THANH XUÂN</h1>
@@ -406,27 +364,6 @@
     </footer>
 
     <script>
-        const bgMusic = document.getElementById('bgMusic');
-        bgMusic.volume = 0.35;
-
-        // Thử phát nhạc tự động
-        window.addEventListener('load', () => {
-            bgMusic.play().catch(() => {
-                // Nếu autoplay bị chặn, thử phát khi có bất kỳ tương tác nào
-                document.addEventListener('click', () => {
-                    bgMusic.play();
-                }, { once: true });
-                
-                document.addEventListener('touchstart', () => {
-                    bgMusic.play();
-                }, { once: true });
-                
-                document.addEventListener('scroll', () => {
-                    bgMusic.play();
-                }, { once: true });
-            });
-        });
-
         const particlesContainer = document.getElementById('particles');
         for (let i = 0; i < 30; i++) {
             const particle = document.createElement('div');
